@@ -21,22 +21,7 @@ var favMovies = [
 
 function printMovie() {
 	for(var i = 0; i < favMovies.length; i++) {
-		console.log(favMovies[i].title + " lasts for " + favMovies[i].duration + " minutes. Stars: " + printStarsNicely(favMovies[i].stars));
+		console.log(favMovies[i].title + " lasts for " + favMovies[i].duration + " minutes. Stars: " + favMovies[i].stars.join(", "));
 	}
 }
-
-function printStarsNicely(array) {
-	var starsNice = "";
-	for(var i = 0; i < array.length; i++) {
-		if (i === 0) {
-		var comma = "";
-	} else {
-		var comma = ", ";
-	};
-		starsNice = starsNice + comma + array[i];
-	}
-	return starsNice;
-}
-
-//printStarsNicely(favMovies[0].stars);
 printMovie();
