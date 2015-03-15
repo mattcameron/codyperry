@@ -78,9 +78,11 @@ var metro = {
 var button = document.getElementById("submit");
 var startStation = document.getElementById("startStation");
 var endStation = document.getElementById("endStation");
+var stopsDisplay = document.getElementById("stopsDisplay");
+var routeDisplay = document.getElementById("routeDisplay")
 
 button.addEventListener('click', function() {
-	console.log("Travelling from " + startStation.options[startStation.selectedIndex].value + " to " + endStation.options[endStation.selectedIndex].value + " takes " + calcStops(startStation.options[startStation.selectedIndex].value, endStation.options[endStation.selectedIndex].value) + " stops.");
-	console.log(getStops(startStation.options[startStation.selectedIndex].value, endStation.options[endStation.selectedIndex].value));
+	stopsDisplay.innerHTML = calcStops(startStation.options[startStation.selectedIndex].value, endStation.options[endStation.selectedIndex].value) + " stops";
+	routeDisplay.innerHTML = getStops(startStation.options[startStation.selectedIndex].value, endStation.options[endStation.selectedIndex].value);
 });
 
