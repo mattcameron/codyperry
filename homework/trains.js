@@ -1,76 +1,86 @@
 
 function calcStops(start, end) {
-	if (lineOn === lineOff) {
-		var noOfStops = Math.abs(lineOn.indexOf(end) - lineOn.indexOf(start));
-		return noOfStops;
-	}
-	var toRichmond = Math.abs(lineOn.indexOf("Richmond") - lineOn.indexOf(start));
-	var fromRichmond = Math.abs(lineOff.indexOf(end) - lineOff.indexOf("Richmond"));
-	return toRichmond + " + " + fromRichmond + " = " + (toRichmond + fromRichmond);
-}
-
-function convertLineInput(line) {
-	if (line === "Sandringham") {
-		return sandringham;
-	} else if (line === "Alamein") {
-		return alamein;
-	} else if (line === "Glen Waverly") {
-		return glenWaverly;
+	var startLine = checkLine(start);
+	var endLine = checkLine(end);
+	var hopOnIndex = startLine.indexOf(start);
+	var hopOffIndex = endLine.indexOf(end);
+	// If the lines are the same...
+	if (startLine === endLine) {
+		return Math.abs(hopOffIndex - hopOnIndex);
 	} else {
-		return "ERROR!"
+	var toRichmond = Math.abs(startLine.indexOf("Richmond") - hopOnIndex);
+	var fromRichmond = Math.abs(hopOffIndex - checkLine(end).indexOf("Richmond"));
+	return toRichmond + fromRichmond;
 	}
 }
 
 function getStops(start, end) {
-		var hopOnIndex = lineOn.indexOf(start);
-		var hopOffIndex = lineOn.indexOf(end);
-	if (lineOn === lineOff) {				// travelling on the same line
+		var startLine = checkLine(start);
+		var endLine = checkLine(end);
+		var hopOnIndex = startLine.indexOf(start);
+		var hopOffIndex = endLine.indexOf(end);
+	if (startLine === endLine) {				// travelling on the same line
 		if (hopOnIndex <= hopOffIndex) {
-			var route = lineOn.slice(hopOnIndex+1, hopOffIndex+1); // add first 1 because station we get on at is not a stop, and second 1 because slice does not include last element you feed it.
+			var route = startLine.slice(hopOnIndex+1, hopOffIndex+1); // add first 1 because station we get on at is not a stop, and second 1 because slice does not include last element you feed it.
 		} else {
-			var route = (lineOn.slice(hopOffIndex, hopOnIndex)).reverse();
+			var route = (startLine.slice(hopOffIndex, hopOnIndex)).reverse();
 		}
-		return route;
-	} else {					// travelling to a different line
-		var changeAtRichmond = lineOn.indexOf("Richmond");
-		var boardAtRichmond = lineOff.indexOf("Richmond");
+		return route.join(', ');
+	} else { // travelling to a different line
+		var changeAtRichmond = startLine.indexOf("Richmond");
+		var boardAtRichmond = endLine.indexOf("Richmond");
 
+		// get the stops on the way to Richmond
+		if (hopOnIndex <= changeAtRichmond) {
+		var route1 = startLine.slice(hopOnIndex+1, changeAtRichmond+1);
+		} else {
+			var route1 = (startLine.slice(changeAtRichmond, hopOnIndex)).reverse();
+		}
+
+		// get the stops on the way from Richmond to destination
+		if (boardAtRichmond <= hopOffIndex) {
+			var route2 = endLine.slice(boardAtRichmond+1, hopOffIndex+1);
+		}
+		else {
+			var route2 = (endLine.slice(hopOffIndex, boardAtRichmond).reverse());
+		}
+		var wholeRoute = "Stations are: " + route1.join(', ') + " then " + route2.join(', ') + ".";
+		return wholeRoute;
 	}
 }
 
-var alamein = ["Flinders Street", "Richmond", "East Richmond", "Burnley", "Hawthorn", "Glenferrie"];
-var glenWaverly = ["Flagstaff", "Melbourne Central", "Parliament", "Richmond", "Kooyong", "Tooronga"];
-var sandringham = ["Southern Cross", "Richmond", "South Yarra", "Prahran", "Windsor"];
-var lineOn = "Sandringham";
-var lineOff = "Sandringham"   // prompt("Which line are you getting off?");
-var startStation = "Windsor"; // prompt("Which station are you getting on at?");
-var endStation =  "Southern Cross";  // prompt("Which station are you getting off at?");
-
-lineOn = convertLineInput(lineOn);
-lineOff = convertLineInput(lineOff);
-
-console.log("Travelling from " + startStation + " to " + endStation + " takes " + calcStops(startStation, endStation) + " stops.");
-console.log("The stops are " + getStops(startStation, endStation));
-
-
-
-
-
-
-
-
-/*
 function checkLine(station) {
-	var currentLine;
-	  if (alamein.indexOf(station) !== -1) {
-		currentLine = alamein;
-	} else if (glenWaverly.indexOf(station) !== -1) {
-		currentLine = glenWaverly;
-	} else if (sandringham.indexOf(station) !== -1) {
-		currentLine = sandringham;
-	} else {
-		currentLine = "That's not a real train line";
-	}
-	return currentLine;
+		// handle Richmond differently because it is on all lines
+	  if (station === "Richmond") {
+	  		//if starting at Richmond, set the line to the end station's line
+	  	if (startStation.options[startStation.selectedIndex].value === "Richmond") {
+	  		return checkLine(endStation.options[endStation.selectedIndex].value);
+	  	} else { // if ending at Richmond, set the line to the start station's line
+	  		return checkLine(startStation.options[startStation.selectedIndex].value);
+	  	}
+	} else if (metro["Alamein"].indexOf(station) >= 0) {
+			return metro["Alamein"];
+	} else if (metro["Glen Waverly"].indexOf(station) >= 0) {
+			return metro["Glen Waverly"];
+	} else if (metro["Sandringham"].indexOf(station) >= 0) {
+			return metro["Sandringham"];
+	} else alert("ERROR");
 }
-*/
+
+// The train directory
+var metro = {
+	Alamein:	["Flinders Street", "Richmond", "East Richmond", "Burnley", "Hawthorn", "Glenferrie"],
+	"Glen Waverly": ["Flagstaff", "Melbourne Central", "Parliament", "Richmond", "Kooyong", "Tooronga"],
+	Sandringham: ["Southern Cross", "Richmond", "South Yarra", "Prahran", "Windsor"]
+}
+
+// HTML elements
+var button = document.getElementById("submit");
+var startStation = document.getElementById("startStation");
+var endStation = document.getElementById("endStation");
+
+button.addEventListener('click', function() {
+	console.log("Travelling from " + startStation.options[startStation.selectedIndex].value + " to " + endStation.options[endStation.selectedIndex].value + " takes " + calcStops(startStation.options[startStation.selectedIndex].value, endStation.options[endStation.selectedIndex].value) + " stops.");
+	console.log(getStops(startStation.options[startStation.selectedIndex].value, endStation.options[endStation.selectedIndex].value));
+});
+
