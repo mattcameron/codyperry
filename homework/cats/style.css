@@ -1,3 +1,7 @@
+body {
+	background-color: #6FDD75;
+}
+
 .flipped {
         -moz-transform: scaleX(-1);
         -o-transform: scaleX(-1);
@@ -10,4 +14,10 @@
 
 .hidden {
 	display: none;
+}
+
+.center {
+	position: absolute;
+   top: 15%;
+   left: 40%;
 }

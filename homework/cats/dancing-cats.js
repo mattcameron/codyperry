@@ -4,35 +4,38 @@ function catWalk() {
   var img2 = document.getElementsByTagName('img')[1];
   var currentLeft = parseInt(img.style.left);
 
-
-// Bonus stuff I haven't got fully working yet.
-  /*
+  // stop the cat in the middle, and do stuff
   var startDancing = ((window.innerWidth-img.width)/2)-10;
 	var stopDancing = ((window.innerWidth-img.width)/2)+10;
 
   if((currentLeft > startDancing) && (currentLeft < stopDancing)) {
-			stopCatWalk();
-			img.className += "hidden";
-			img2.className = "";
+  		// stop catWalk
+  		clearInterval(catTimer);
+  		catTimer = null;
+
+  		//change the visible image to the dancing cat
+			img.classList.add("hidden");
+			img2.classList.remove("hidden");
 			setTimeout(startCatWalk, 3000);
   	} else {
-  		img.className = (direction === "left") ?  "flipped" : "";
-  		img2.className = "hidden";
-  	}
-  	*/
+  		// ensure that the regular cat is showing
+  		img.classList.remove("hidden");
+  		img2.classList.add("hidden");
+  	};
+
 
   if (direction === "right") {
 		img.style.left = (currentLeft + movePixels) + 'px';
 		if (currentLeft >= window.innerWidth-img.width) {
 			direction = "left";
-			img.className = "flipped";
+			img.classList.add("flipped");
 		}
 	}
 		if (direction === "left") {
   	img.style.left = (currentLeft - movePixels) + 'px';
   	if (currentLeft <= 0) {
 			direction = "right";
-			img.className = "";
+			img.classList.remove("flipped");
   	}
 	}
 
